@@ -60,14 +60,14 @@ while True:
     setmask()
     draw()
     drawchar()
-    touch_lava=touchingmask(lava) #added this already
-    touch_jumpy=touchingmask(jumpy) #added
-    touch_fastleft=touchingmask(fastleft) #added
-    touch_fastright=touchingmask(fastright) #OK
-    touch_water=touchingmask(water) #doing this
-    touch_shrink=touchingmask(shrink) #ok
-    touch_normal=touchingmask(normal)#ok
-    touch_win=touchingmask(win) #already did this
+    touch_lava=touchingmask(lava)
+    touch_jumpy=touchingmask(jumpy)
+    touch_fastleft=touchingmask(fastleft)
+    touch_fastright=touchingmask(fastright)
+    touch_water=touchingmask(water)
+    touch_shrink=touchingmask(shrink)
+    touch_normal=touchingmask(normal)
+    touch_win=touchingmask(win)
     if big:
       up_touch=touchingmask2(top,0,1)
       down_touch=touchingmask2(bottom,0,0)
