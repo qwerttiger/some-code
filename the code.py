@@ -7,6 +7,9 @@ playersmallright=pygame.transform.scale(playerright,(25,25))
 top=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Desktop/python/platformer sprites/top.png"),(0,0,0),(1,1,1))
 bottom=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Desktop/python/platformer sprites/bottom.png"),(0,0,0),(1,1,1))
 side=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Desktop/python/platformer sprites/side.png"),(0,0,0),(1,1,1))
+topsmall=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Desktop/python/platformer sprites/topsmall.png"),(0,0,0),(1,1,1))
+bottomsmall=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Desktop/python/platformer sprites/bottomsmall.png"),(0,0,0),(1,1,1))
+sidesmall=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Desktop/python/platformer sprites/sidesmall.png"),(0,0,0),(1,1,1))
 screen=pygame.display.set_mode((700,700))
 pygame.display.set_caption("Platformer")
 costume=playerright
@@ -57,17 +60,22 @@ while True:
     setmask()
     draw()
     drawchar()
-    touch_lava=touchingmask(lava)
-    touch_jumpy=touchingmask(jumpy)
-    touch_fastleft=touchingmask(fastleft)
-    touch_fastright=touchingmask(fastright)
-    touch_water=touchingmask(water)
-    touch_shrink=touchingmask(shrink)
-    touch_normal=touchingmask(normal)
-    touch_win=touchingmask(win)
-    up_touch=touchingmask2(top,0,1)
-    down_touch=touchingmask2(bottom,0,0)
-    side_touch=touchingmask2(side,1,0)
+    touch_lava=touchingmask(lava) #added this already
+    touch_jumpy=touchingmask(jumpy) #added
+    touch_fastleft=touchingmask(fastleft) #added
+    touch_fastright=touchingmask(fastright) #OK
+    touch_water=touchingmask(water) #doing this
+    touch_shrink=touchingmask(shrink) #ok
+    touch_normal=touchingmask(normal)#ok
+    touch_win=touchingmask(win) #already did this
+    if big:
+      up_touch=touchingmask2(top,0,1)
+      down_touch=touchingmask2(bottom,0,0)
+      side_touch=touchingmask2(side,1,0)
+    else:
+      up_touch=touchingmask2(topsmall,0,1)
+      down_touch=touchingmask2(bottomsmall,0,0)
+      side_touch=touchingmask2(sidesmall,1,0)
     if not side_touch:
       if xvel>1:
         xvel-=1
@@ -76,12 +84,17 @@ while True:
       else:
         xvel=0
     if not down_touch:
-      yvel-=1
+      if not touch_water:
+        yvel-=1
+      else:
+        ypos+=1
     else:
       yvel=0
     keys=pygame.key.get_pressed()
-    if keys[pygame.K_UP] and down_touch:
+    if keys[pygame.K_UP] and down_touch and not touch_water:
       yvel+=20
+    if keys[pygame.K_UP] and touch_water:
+      ypos-=3
     if keys[pygame.K_LEFT]:
       xvel-=1.5
       if big:
@@ -94,6 +107,14 @@ while True:
         costume=playerright
       else:
         costume=playersmallright
+    if not big and costume==playerleft:
+      costume=playersmallleft
+    if not big and costume==playerright:
+      costume=playersmallright
+    if big and costume==playersmallleft:
+      costume=playerleft
+    if big and costume==playersmallright:
+      costume=playerright
     for event in pygame.event.get():
       if event.type==pygame.QUIT:
         pygame.quit()
@@ -110,9 +131,21 @@ while True:
     if up_touch:
       ypos+=1
       yvel=0
-    if touch_win:
-      level+=1
-      break
+    if touch_jumpy:
+      yvel+=5
+    if touch_fastleft:
+      xvel+=3
+    if touch_fastright:
+      xvel-=3
+    if touch_shrink:
+      big=False
+    if touch_normal:
+      big=True
+    if touch_water:
+      yvel=0
     xpos+=xvel
     ypos-=yvel
     pygame.display.flip()
+    if touch_win:
+      level+=1
+      break
