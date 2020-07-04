@@ -21,7 +21,6 @@ smallcharmask=pygame.mask.Mask((25,25),True)
 xvel=0
 yvel=0
 big=True
-#big=False
 def setmask():
   global charmask
   if big:
