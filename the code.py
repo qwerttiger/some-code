@@ -58,8 +58,9 @@ while True: #level loop
   if os.path.exists(f"C:/Users/Rainbow/Desktop/python/platformer sprites/level {level}.png"): #if the background picture exists
     setuplvl() #setup the level
     xpos,ypos=0,550 #setup the character position
+    big=True #go bigger
   else: #if you went through all of the levels
-    print("\nYOU WON") #then you win
+    input("\nYOU WON") #then you win
     sys.exit() #exit
     pygame.quit() #pygame exit
   while True: #main loop
@@ -99,7 +100,8 @@ while True: #level loop
       else: #if touching water
         ypos+=1 #go down
     else: #if touching ground
-      yvel=0 #don't go down
+      ypos+=yvel-0.5 #go up
+      yvel=0 #and don't go down
     keys=pygame.key.get_pressed() #the keys that are pressed
     if side_touch: #if touching the side
       xvel=-xvel #then bounce
