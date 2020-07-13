@@ -36,6 +36,8 @@ smallcharmask=pygame.mask.Mask((25,25),True)
 xvel=0
 yvel=0
 big=True
+gravity=1
+canswitchg=True
 
 #function setup
 def setmask(): #this sets which mask to use
@@ -66,8 +68,8 @@ def setuplvl(): #sets up the mask for level
 def touchingmask(mask): #mask collide detection
   return bool(charmask.overlap(mask,(-round(xpos),-round(ypos))))
 
-def touchingmask2(mask,diff1,diff2): #more advanced mask collide detection
-  return bool(mask.overlap(ground,(-round(xpos+diff1),-round(ypos-diff2))))
+def touchingmask2(mask): #more advanced mask collide detection
+  return bool(mask.overlap(ground,(-round(xpos),-round(ypos))))
 
 while True: #level loop
   if os.path.exists(f"C:/Users/Rainbow/Desktop/python/platformer sprites/level {level}.png"): #if the background picture exists
@@ -76,9 +78,9 @@ while True: #level loop
     big=True #go bigger
 
   else: #if you went through all of the levels
+    pygame.quit() #pygame exit
     input("\nYOU WON") #then you win
     sys.exit() #exit
-    pygame.quit() #pygame exit
   while True: #main loop
     setmask() #setup the mask
     draw() #draw the background
@@ -96,15 +98,15 @@ while True: #level loop
 
     if big: #if the character is big (or not small)
       #collide with ground
-      up_touch=touchingmask2(top,0,1)
-      down_touch=touchingmask2(bottom,0,0)
-      side_touch=touchingmask2(side,1,0)
+      up_touch=touchingmask2(top)
+      down_touch=touchingmask2(bottom)
+      side_touch=touchingmask2(side)
 
     else: #if the character is small (or not big)
       #collide with ground
-      up_touch=touchingmask2(topsmall,0,1)
-      down_touch=touchingmask2(bottomsmall,0,0)
-      side_touch=touchingmask2(sidesmall,1,0)
+      up_touch=touchingmask2(topsmall)
+      down_touch=touchingmask2(bottomsmall)
+      side_touch=touchingmask2(sidesmall)
 
     #these lines makes friction
     if not side_touch:
@@ -115,23 +117,23 @@ while True: #level loop
       else:
         xvel=0
 
-    if not down_touch: #if not touching ground
+    if not ((down_touch and gravity==1) or (up_touch and gravity==-1)): #if not touching ground
       if not touch_water: #if not touching water
-        yvel-=1 #gravity
+        yvel-=gravity #gravity
       else: #if touching water
-        ypos+=1 #go down
+        ypos+=gravity #go down
     else: #if touching ground
-      ypos+=yvel-0.5 #go up
+      ypos+=yvel-0.5*gravity #go up
       yvel=0 #and don't go down
 
     keys=pygame.key.get_pressed() #the keys that are pressed
     if side_touch: #if touching the side
       xvel=-xvel #then bounce
       xpos+=xvel #and go back
-    if keys[pygame.K_UP] and down_touch and not touch_water: #if you press up while touching the ground and not touching the water
-      yvel+=20 #jump
+    if keys[pygame.K_UP] and ((down_touch and gravity==1) or (up_touch and gravity==-1)) and not touch_water: #if you press up while touching the ground and not touching the water
+      yvel+=20*gravity #jump
     if keys[pygame.K_UP] and touch_water: #if you press up while touching water
-      ypos-=3 #swim
+      ypos-=3*gravity #swim
     if keys[pygame.K_LEFT]: #if pressing left
       xvel-=1.5 #accelerate left
       if big: #if you are big
@@ -144,8 +146,14 @@ while True: #level loop
         costume=playerright #set costume to big player right
       else: #if small
         costume=playersmallright #set to small player right
-    #set the costume if not pressing left and right
+    if keys[pygame.K_g] and level>=11: #if switching gravity
+      if canswitchg: #and if you can switch
+        gravity=-gravity #reverse gravity
+        canswitchg=False #and not be able to switch
+    else: #else
+      canswitchg=True #you can switch gravity
 
+    #set the costume if not pressing left and right
     if not big and costume==playerleft:
       costume=playersmallleft
     if not big and costume==playerright:
@@ -173,7 +181,7 @@ while True: #level loop
       yvel=0 #set yvel to 0
 
     if touch_jumpy: #if touching bouncy thing
-      yvel+=5 #bounce up
+      yvel+=5*gravity #bounce up
 
     if touch_fastleft: #if touching fastleft
       xvel-=3 #accelerate left
