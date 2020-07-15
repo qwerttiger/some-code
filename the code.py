@@ -1,5 +1,5 @@
 #imports
-import pygame,copy,os,sys
+import pygame,copy,os,sys,time
 
 #pygame setup
 pygame.init()
@@ -38,6 +38,7 @@ yvel=0
 big=True
 gravity=1
 canswitchg=True
+listofdisplays=[(1,"hi","this is a platformer","left and right keys to move"),(2,"up to jump"),(3,"avoid red"),(4,"green makes you shrink")]
 
 #function setup
 def setmask(): #this sets which mask to use
@@ -68,10 +69,30 @@ def setuplvl(): #sets up the mask for level
 def touchingmask(mask): #mask collide detection
   return bool(charmask.overlap(mask,(-round(xpos),-round(ypos))))
 
-def touchingmask2(mask): #more advanced mask collide detection
-  return bool(mask.overlap(ground,(-round(xpos),-round(ypos))))
+def touchingmask2(mask,diff): #more advanced mask collide detection
+  return bool(mask.overlap(ground,(-round(xpos+diff[0]),-round(ypos+diff[1]))))
+
+def drawtext(text,colour,size): #draws a single piece of text
+  screen.blit(pygame.font.SysFont("arial",size).render(text,True,colour),(350-round(pygame.font.SysFont("arial",size).render(text,True,colour).get_width()/2),100-pygame.font.SysFont("arial",size).render(text,True,colour).get_height()/2))
+
+def drawtexts(lists): #draw multiple texts
+  for listt in lists: #for every given parameter
+    if level==listt[0]: #if it is the given level
+      thing=listt[1:] #then the list of things to draw is set to "thing"
+      for InsertsRandomCharacter in thing: #for something in the list "thing"
+        drawtext(InsertsRandomCharacter,(0,0,0),30) #draw the thing it is supposed to draw
+        pygame.display.flip() #update
+        time.sleep(1) #waits
+        drawtext(InsertsRandomCharacter,(255,255,255),30) #delete the text
+        pygame.display.flip() #update
+        for event in pygame.event.get(): #see if you quit
+          if event.type==pygame.QUIT:
+            pygame.quit()
+            sys.exit()
 
 while True: #level loop
+  xvel,yvel=0,0 #set velocity to 0
+  screen.fill((255,255,255))
   if os.path.exists(f"C:/Users/Rainbow/Desktop/python/platformer sprites/level {level}.png"): #if the background picture exists
     setuplvl() #setup the level
     xpos,ypos=0,550 #setup the character position
@@ -81,6 +102,13 @@ while True: #level loop
     pygame.quit() #pygame exit
     input("\nYOU WON") #then you win
     sys.exit() #exit
+
+  draw() #draw the background
+  drawchar() #draw the character
+  pygame.display.flip()
+  #drawing text
+  drawtexts(listofdisplays)
+
   while True: #main loop
     setmask() #setup the mask
     draw() #draw the background
@@ -98,15 +126,15 @@ while True: #level loop
 
     if big: #if the character is big (or not small)
       #collide with ground
-      up_touch=touchingmask2(top)
-      down_touch=touchingmask2(bottom)
-      side_touch=touchingmask2(side)
+      up_touch=touchingmask2(top,(0,1))
+      down_touch=touchingmask2(bottom,(0,0))
+      side_touch=touchingmask2(side,(1,0))
 
     else: #if the character is small (or not big)
       #collide with ground
-      up_touch=touchingmask2(topsmall)
-      down_touch=touchingmask2(bottomsmall)
-      side_touch=touchingmask2(sidesmall)
+      up_touch=touchingmask2(topsmall,(0,1))
+      down_touch=touchingmask2(bottomsmall,(0,0))
+      side_touch=touchingmask2(sidesmall,(1,0))
 
     #these lines makes friction
     if not side_touch:
@@ -146,7 +174,7 @@ while True: #level loop
         costume=playerright #set costume to big player right
       else: #if small
         costume=playersmallright #set to small player right
-    if keys[pygame.K_g] and level>=11: #if switching gravity
+    if keys[pygame.K_z] and level>=11 and ((down_touch and gravity==1) or (up_touch and gravity==-1)): #if switching gravity
       if canswitchg: #and if you can switch
         gravity=-gravity #reverse gravity
         canswitchg=False #and not be able to switch
@@ -176,7 +204,7 @@ while True: #level loop
     if touch_lava: #if touching lava
       xpos,ypos=0,550 #then restart
 
-    if up_touch and not down_touch: #if touching something above but not down
+    if (up_touch and not down_touch and gravity==1 and canswitchg) or (down_touch and not up_touch and gravity==-1 and canswitchg): #if touching something above but not down
       ypos+=1 #go down
       yvel=0 #set yvel to 0
 
