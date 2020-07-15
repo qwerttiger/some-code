@@ -38,7 +38,7 @@ yvel=0
 big=True
 gravity=1
 canswitchg=True
-listofdisplays=[(1,"hi","this is a platformer","left and right keys to move"),(2,"up to jump"),(3,"avoid red"),(4,"green makes you shrink")]
+listofdisplays=[(1,"hi","this is a platformer","left and right keys to move"),(2,"up to jump"),(3,"avoid red"),(4,"green makes you shrink"),(5,"blue makes you back to normal"),(6,"magenta makes you go right"),(8,"water!"),(9,"don't get stuck inside","oh by the way press \"r\" to reset"),(10,"a trampoline!"),(11,"press z to switch gravity")]
 
 #function setup
 def setmask(): #this sets which mask to use
@@ -72,24 +72,41 @@ def touchingmask(mask): #mask collide detection
 def touchingmask2(mask,diff): #more advanced mask collide detection
   return bool(mask.overlap(ground,(-round(xpos+diff[0]),-round(ypos+diff[1]))))
 
-def drawtext(text,colour,size): #draws a single piece of text
-  screen.blit(pygame.font.SysFont("arial",size).render(text,True,colour),(350-round(pygame.font.SysFont("arial",size).render(text,True,colour).get_width()/2),100-pygame.font.SysFont("arial",size).render(text,True,colour).get_height()/2))
+def drawtext(text,colour): #draws a single piece of text
+  screen.blit(pygame.font.SysFont("arial",30).render(text,True,colour),(350-round(pygame.font.SysFont("arial",30).render(text,True,colour).get_width()/2),100-pygame.font.SysFont("arial",30).render(text,True,colour).get_height()/2))
 
 def drawtexts(lists): #draw multiple texts
   for listt in lists: #for every given parameter
     if level==listt[0]: #if it is the given level
       thing=listt[1:] #then the list of things to draw is set to "thing"
       for InsertsRandomCharacter in thing: #for something in the list "thing"
-        drawtext(InsertsRandomCharacter,(0,0,0),30) #draw the thing it is supposed to draw
+        drawtext(InsertsRandomCharacter,(0,0,0)) #draw the thing it is supposed to draw
         pygame.display.flip() #update
         time.sleep(1) #waits
-        drawtext(InsertsRandomCharacter,(255,255,255),30) #delete the text
-        pygame.display.flip() #update
+        drawtext(InsertsRandomCharacter,(255,255,255)) #delete the text
         for event in pygame.event.get(): #see if you quit
           if event.type==pygame.QUIT:
             pygame.quit()
             sys.exit()
 
+def startthing(): #the thing at the start
+  screen.fill((255,255,255))
+  drawtext("epik | a platformer",(0,0,0))
+  pygame.draw.rect(screen,(0,0,0),pygame.Rect((300,300),(100,100)),1)
+  pygame.draw.line(screen,(0,0,0),(328,325),(328,375))
+  pygame.draw.line(screen,(0,0,0),(328,325),(361,350))
+  pygame.draw.line(screen,(0,0,0),(328,375),(361,350))
+  pygame.display.flip()
+  keep_going=True
+  while keep_going:
+    for event in pygame.event.get():
+      if event.type==pygame.QUIT:
+        pygame.quit()
+        sys.exit()
+      if event.type==pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pos()[0]>=300 and pygame.mouse.get_pos()[0]<=400 and pygame.mouse.get_pos()[1]>=300 and pygame.mouse.get_pos()[1]<=400:
+        keep_going=False
+
+startthing()
 while True: #level loop
   xvel,yvel=0,0 #set velocity to 0
   screen.fill((255,255,255))
@@ -180,6 +197,8 @@ while True: #level loop
         canswitchg=False #and not be able to switch
     else: #else
       canswitchg=True #you can switch gravity
+    if keys[pygame.K_r]:
+      xvel,yvel,xpos,ypos=0,0,0,550
 
     #set the costume if not pressing left and right
     if not big and costume==playerleft:
