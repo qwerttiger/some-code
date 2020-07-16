@@ -1,4 +1,6 @@
 #imports
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT']="hide"
 import pygame,copy,os,sys,time
 
 #pygame setup
@@ -38,8 +40,11 @@ yvel=0
 big=True
 gravity=1
 canswitchg=True
-listofdisplays=[(1,"hi","this is a platformer","left and right keys to move"),(2,"up to jump"),(3,"avoid red"),(4,"green makes you shrink"),(5,"blue makes you back to normal"),(6,"magenta makes you go right"),(8,"water!"),(9,"don't get stuck inside","oh by the way press \"r\" to reset"),(10,"a trampoline!"),(11,"press z to switch gravity")]
+listofdisplays=[(1,"hi","this is a platformer","left and right keys to move"),(2,"up to jump"),(3,"avoid red"),(4,"green makes you shrink"),(5,"blue makes you back to normal"),(6,"magenta makes you go right"),(8,"water!"),(9,"don't get stuck inside","oh by the way press \"r\" to reset"),(10,"a trampoline!"),(11,"press z to switch gravity"),(12,"if it's too hard, press \"n\".")]
 displaytime=0
+skips=0
+cann=True
+deaths=0
 
 #function setup
 def setmask(): #this sets which mask to use
@@ -118,12 +123,12 @@ while True: #level loop
   screen.fill((255,255,255))
   if os.path.exists(f"C:/Users/Rainbow/Desktop/python/platformer sprites/level {level}.png"): #if the background picture exists
     setuplvl() #setup the level
-    xpos,ypos=0,550 #setup the character position
+    xpos,ypos,gravity=0,550,1 #setup the character position
     big=True #go bigger
 
   else: #if you went through all of the levels
     pygame.quit() #pygame exit
-    input("\nyou took "+str(round(time.time()-t-displaytime,1))+" seconds to win") #then you win
+    input("\nyou took "+str(round(time.time()-t-displaytime,1))+" seconds to win with "+str(skips)+" skips and "+str(deaths)+" deaths.") #then you win
     sys.exit() #exit
 
   draw() #draw the background
@@ -203,9 +208,15 @@ while True: #level loop
         canswitchg=False #and not be able to switch
     else: #else
       canswitchg=True #you can switch gravity
-    if keys[pygame.K_r]:
-      xvel,yvel,xpos,ypos=0,0,0,550
-
+    if keys[pygame.K_r]: #if restart
+      xvel,yvel,xpos,ypos,gravity=0,0,0,550,1
+    if keys[pygame.K_n] and cann: #if skip level
+      cann=False
+      level+=1
+      skips+=1
+      break
+    else:
+      cann=True
     #set the costume if not pressing left and right
     if not big and costume==playerleft:
       costume=playersmallleft
@@ -227,7 +238,8 @@ while True: #level loop
       xpos=650 #go back
 
     if touch_lava: #if touching lava
-      xpos,ypos=0,550 #then restart
+      xpos,ypos,xvel,yvel,gravity=0,550,0,0,1 #then restart
+      deaths+=1
 
     if (up_touch and not down_touch and gravity==1 and canswitchg) or (down_touch and not up_touch and gravity==-1 and canswitchg): #if touching something above but not down
       ypos+=1 #go down
