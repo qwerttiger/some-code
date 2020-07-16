@@ -1,8 +1,7 @@
 #imports
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT']="hide"
-del os
-import pygame,copy,os,sys,time
+import pygame,copy,sys,time
 
 #pygame setup
 pygame.init()
@@ -12,6 +11,8 @@ playerright=pygame.image.load("C:/Users/Rainbow/Desktop/python/platformer sprite
 playerleft=pygame.transform.flip(playerright,True,False)
 playersmallleft=pygame.transform.scale(playerleft,(25,25))
 playersmallright=pygame.transform.scale(playerright,(25,25))
+for x in [playerright,playerleft,playersmallleft,playersmallright]:
+  x.set_colorkey((255,255,255))
 
 #mask making (masks can tell you which things collide)
 top=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Desktop/python/platformer sprites/top.png"),(0,0,0),(1,1,1))
@@ -126,6 +127,7 @@ while True: #level loop
     setuplvl() #setup the level
     xpos,ypos,gravity=0,550,1 #setup the character position
     big=True #go bigger
+    costume=playerright
 
   else: #if you went through all of the levels
     pygame.quit() #pygame exit
