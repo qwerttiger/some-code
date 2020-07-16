@@ -1,6 +1,7 @@
 #imports
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT']="hide"
+del os
 import pygame,copy,os,sys,time
 
 #pygame setup
@@ -116,8 +117,8 @@ def startthing(): #the thing at the start
 
 #main game
 
-t=time.time()
 startthing()
+t=time.time()
 while True: #level loop
   xvel,yvel=0,0 #set velocity to 0
   screen.fill((255,255,255))
@@ -156,13 +157,13 @@ while True: #level loop
       #collide with ground
       up_touch=touchingmask2(top,(0,1))
       down_touch=touchingmask2(bottom,(0,0))
-      side_touch=touchingmask2(side,(1,0))
+      side_touch=touchingmask2(side,(1,0)) or xpos<0 or xpos>650
 
     else: #if the character is small (or not big)
       #collide with ground
       up_touch=touchingmask2(topsmall,(0,1))
       down_touch=touchingmask2(bottomsmall,(0,0))
-      side_touch=touchingmask2(sidesmall,(1,0))
+      side_touch=touchingmask2(sidesmall,(1,0)) or xpos<0 or xpos>675
 
     #these lines makes friction
     if not side_touch:
@@ -209,11 +210,12 @@ while True: #level loop
     else: #else
       canswitchg=True #you can switch gravity
     if keys[pygame.K_r]: #if restart
-      xvel,yvel,xpos,ypos,gravity=0,0,0,550,1
+      xvel,yvel,xpos,ypos,gravity,big=0,0,0,550,1,True
     if keys[pygame.K_n] and cann: #if skip level
       cann=False
       level+=1
       skips+=1
+      big=True
       break
     else:
       cann=True
@@ -230,12 +232,6 @@ while True: #level loop
       if event.type==pygame.QUIT: #if you press quit
         pygame.quit() #then quit
         sys.exit() #and exit
-    if xpos<0: #if touching edge
-      xvel=-xvel #bounce
-      xpos=0 #go back
-    if xpos>650: #if touching other edge
-      xvel=-xvel #bounce
-      xpos=650 #go back
 
     if touch_lava: #if touching lava
       xpos,ypos,xvel,yvel,gravity=0,550,0,0,1 #then restart
