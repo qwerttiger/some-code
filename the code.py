@@ -43,7 +43,7 @@ yvel=0
 big=True
 gravity=1
 canswitchg=True
-listofdisplays=[(1,"hi","this is a platformer","left and right keys to move"),(2,"up to jump"),(3,"avoid red"),(4,"green makes you shrink"),(5,"blue makes you back to normal"),(6,"magenta makes you go right"),(8,"water!"),(9,"don't get stuck inside","oh by the way press \"r\" to reset"),(10,"a trampoline!"),(11,"press z to switch gravity"),(12,"if it's too hard, press \"n\"."),(13,"now the element is grass")]
+listofdisplays=[(1,"hi","this is a platformer","left and right keys to move"),(2,"up to jump"),(3,"avoid red"),(4,"green makes you shrink"),(5,"blue makes you back to normal"),(6,"magenta makes you go right"),(8,"water!"),(9,"don't get stuck inside","oh by the way press \"r\" to reset"),(10,"a trampoline!"),(11,"press z to switch gravity"),(12,"if it's too hard, press \"n\"."),(13,"now the element is grass"),(14,"use your power of gravity")]
 displaytime=0
 skips=0
 cann=True
@@ -305,6 +305,8 @@ while True: #level loop
       break
     else:
       cann=True
+    if keys[pygame.K_p]:
+      startthing()
     #set the costume if not pressing left and right
     if not big and costume==playerleft:
       costume=playersmallleft
