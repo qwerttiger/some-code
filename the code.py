@@ -1,6 +1,7 @@
 #imports
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT']="hide"
+
 import pygame,copy,sys,time
 
 #pygame setup
@@ -42,11 +43,12 @@ yvel=0
 big=True
 gravity=1
 canswitchg=True
-listofdisplays=[(1,"hi","this is a platformer","left and right keys to move"),(2,"up to jump"),(3,"avoid red"),(4,"green makes you shrink"),(5,"blue makes you back to normal"),(6,"magenta makes you go right"),(8,"water!"),(9,"don't get stuck inside","oh by the way press \"r\" to reset"),(10,"a trampoline!"),(11,"press z to switch gravity"),(12,"if it's too hard, press \"n\".")]
+listofdisplays=[(1,"hi","this is a platformer","left and right keys to move"),(2,"up to jump"),(3,"avoid red"),(4,"green makes you shrink"),(5,"blue makes you back to normal"),(6,"magenta makes you go right"),(8,"water!"),(9,"don't get stuck inside","oh by the way press \"r\" to reset"),(10,"a trampoline!"),(11,"press z to switch gravity"),(12,"if it's too hard, press \"n\"."),(13,"now the element is grass")]
 displaytime=0
 skips=0
 cann=True
 deaths=0
+element="normal"
 
 #function setup
 def setmask(): #this sets which mask to use
@@ -68,12 +70,15 @@ def maketomask(*things): #makes a string and colour to a mask
     exec(f"global {name}",globals())
     exec(f"{name}=pygame.mask.from_threshold({name},{colour},(1,1,1))",globals())
 
-def setuplvl(): #sets up the mask for level
+def setuplvl(): #sets up the masks for the level
   global ground,lava,jumpy,fastleft,fastright,water,shrink,normal,win
   file=pygame.image.load(f"C:/Users/Rainbow/Desktop/python/platformer sprites/level {level}.png")
   ground,lava,jumpy,fastleft,fastright,water,shrink,normal,win=copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file)
-  maketomask(["ground",(0,0,0)],["lava",(255,0,0)],["jumpy",(255,255,100)],["fastleft",(0,255,0)],["fastright",(255,0,255)],["water",(0,255,255)],["shrink",(0,100,0)],["normal",(0,0,100)],["win",(255,255,0)])
-
+  maketomask(["lava",(255,0,0)],["jumpy",(255,255,100)],["fastleft",(0,255,0)],["fastright",(255,0,255)],["water",(0,255,255)],["shrink",(0,100,0)],["normal",(0,0,100)],["win",(255,255,0)])
+  if not element=="grass":
+    maketomask(["ground",(0,0,0)])
+  if element=="grass":
+    maketomask(["ground",(0,200,0)])
 def touchingmask(mask): #mask collide detection
   return bool(charmask.overlap(mask,(-round(xpos),-round(ypos))))
 
@@ -101,7 +106,8 @@ def drawtexts(lists): #draw multiple texts
 
 def startthing(): #the thing at the start
   screen.fill((255,255,255))
-  drawtext("epik | a platformer",(0,0,0))
+  drawtext("elements | a platformer",(0,0,0))
+  #drawing play button
   pygame.draw.rect(screen,(0,0,0),pygame.Rect((300,300),(100,100)),1)
   pygame.draw.line(screen,(0,0,0),(336,325),(336,375))
   pygame.draw.line(screen,(0,0,0),(336,325),(379,350))
@@ -121,6 +127,9 @@ def startthing(): #the thing at the start
 startthing()
 t=time.time()
 while True: #level loop
+  if level==13:
+    element="grass"
+
   xvel,yvel=0,0 #set velocity to 0
   screen.fill((255,255,255))
   if os.path.exists(f"C:/Users/Rainbow/Desktop/python/platformer sprites/level {level}.png"): #if the background picture exists
@@ -131,11 +140,13 @@ while True: #level loop
 
   else: #if you went through all of the levels
     pygame.quit() #pygame exit
-    input("\nyou took "+str(round(time.time()-t-displaytime,1))+" seconds to win with "+str(skips)+" skips and "+str(deaths)+" deaths.") #then you win
+    input("you took "+str(round(time.time()-t-displaytime,1))+" seconds to win with "+str(skips)+" skips and "+str(deaths)+" deaths.") #then you win
     sys.exit() #exit
 
   draw() #draw the background
   drawchar() #draw the character
+  if element=="grass":
+    pygame.draw.circle(screen,(255,255,1),(700,0),100)
   pygame.display.flip()
   #drawing text
   drawtexts(listofdisplays)
@@ -143,6 +154,8 @@ while True: #level loop
   while True: #main loop
     setmask() #setup the mask
     draw() #draw the background
+    if element=="grass":
+      pygame.draw.circle(screen,(255,255,1),(700,0),100)
     drawchar() #draw the character
 
     #level mask setup
