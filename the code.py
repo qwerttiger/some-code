@@ -105,6 +105,7 @@ def drawtexts(lists): #draw multiple texts
             sys.exit()
 
 def startthing(): #the thing at the start
+  global playerright,playerleft,playersmallleft,playersmallright
   screen.fill((255,255,255))
   drawtext("elements | a platformer",(0,0,0))
   #drawing play button
@@ -112,6 +113,8 @@ def startthing(): #the thing at the start
   pygame.draw.line(screen,(0,0,0),(336,325),(336,375))
   pygame.draw.line(screen,(0,0,0),(336,325),(379,350))
   pygame.draw.line(screen,(0,0,0),(336,375),(379,350))
+  pygame.draw.rect(screen,(0,0,0),pygame.Rect((100,300),(100,100)),1)
+  screen.blit(playerright,(125,325))
   pygame.display.flip()
   keep_going=True
   while keep_going:
@@ -121,6 +124,74 @@ def startthing(): #the thing at the start
         sys.exit()
       if (event.type==pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pos()[0]>=300 and pygame.mouse.get_pos()[0]<=400 and pygame.mouse.get_pos()[1]>=300 and pygame.mouse.get_pos()[1]<=400) or event.type==pygame.KEYDOWN:
         keep_going=False
+      if (event.type==pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pos()[0]>=100 and pygame.mouse.get_pos()[0]<=300 and pygame.mouse.get_pos()[1]>=300 and pygame.mouse.get_pos()[1]<=400) or event.type==pygame.KEYDOWN:
+        screen.fill((255,255,255))
+        pygame.draw.rect(screen,(0,0,0),pygame.Rect((175,325),(50,50)))
+        pygame.draw.rect(screen,(255,0,0),pygame.Rect((225,325),(50,50)))
+        pygame.draw.rect(screen,(0,255,0),pygame.Rect((275,325),(50,50)))
+        pygame.draw.rect(screen,(0,0,255),pygame.Rect((325,325),(50,50)))
+        pygame.draw.rect(screen,(255,255,0),pygame.Rect((375,325),(50,50)))
+        pygame.draw.rect(screen,(255,0,255),pygame.Rect((425,325),(50,50)))
+        pygame.draw.rect(screen,(0,255,255),pygame.Rect((475,325),(50,50)))
+        pygame.display.flip()
+        kep_going=True
+        while kep_going:
+          for event in pygame.event.get():
+            if event.type==pygame.QUIT:
+              pygame.quit()
+              sys.exit()
+            if event.type==pygame.MOUSEBUTTONDOWN:
+              pos=pygame.mouse.get_pos()
+              if pos[1]>=325 and pos[1]<=375:
+                if pos[0]>=175 and pos[0]<225:
+                  for posx in range(50):
+                    for posy in range(50):
+                      if playerright.get_at((posx,posy)) not in [(255,255,255),(254,254,254)]:
+                        playerright.set_at((posx,posy),(0,0,0))
+                if pos[0]>=225 and pos[0]<275:
+                  for posx in range(50):
+                    for posy in range(50):
+                      if playerright.get_at((posx,posy)) not in [(255,255,255),(254,254,254)]:
+                        playerright.set_at((posx,posy),(255,0,0))
+                if pos[0]>=275 and pos[0]<325:
+                  for posx in range(50):
+                    for posy in range(50):
+                      if playerright.get_at((posx,posy)) not in [(255,255,255),(254,254,254)]:
+                        playerright.set_at((posx,posy),(0,255,0))
+                if pos[0]>=325 and pos[0]<375:
+                  for posx in range(50):
+                    for posy in range(50):
+                      if playerright.get_at((posx,posy)) not in [(255,255,255),(254,254,254)]:
+                        playerright.set_at((posx,posy),(0,0,255))
+                if pos[0]>=375 and pos[0]<425:
+                  for posx in range(50):
+                    for posy in range(50):
+                      if playerright.get_at((posx,posy)) not in [(255,255,255),(254,254,254)]:
+                        playerright.set_at((posx,posy),(255,255,0))
+                if pos[0]>=425 and pos[0]<475:
+                  for posx in range(50):
+                    for posy in range(50):
+                      if playerright.get_at((posx,posy)) not in [(255,255,255),(254,254,254)]:
+                        playerright.set_at((posx,posy),(255,0,255))
+                if pos[0]>=475 and pos[0]<525:
+                  for posx in range(50):
+                    for posy in range(50):
+                      if playerright.get_at((posx,posy)) not in [(255,255,255),(254,254,254)]:
+                        playerright.set_at((posx,posy),(0,255,255))
+
+                playerleft=pygame.transform.flip(playerright,True,False)
+                playersmallleft=pygame.transform.scale(playerleft,(25,25))
+                playersmallright=pygame.transform.scale(playerright,(25,25))
+              screen.fill((255,255,255))
+              drawtext("elements | a platformer",(0,0,0))
+              pygame.draw.rect(screen,(0,0,0),pygame.Rect((300,300),(100,100)),1)
+              pygame.draw.line(screen,(0,0,0),(336,325),(336,375))
+              pygame.draw.line(screen,(0,0,0),(336,325),(379,350))
+              pygame.draw.line(screen,(0,0,0),(336,375),(379,350))
+              pygame.draw.rect(screen,(0,0,0),pygame.Rect((100,300),(100,100)),1)
+              screen.blit(playerright,(125,325))
+              kep_going=False
+              pygame.display.flip()
 
 #main game
 
