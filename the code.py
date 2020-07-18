@@ -49,6 +49,7 @@ skips=0
 cann=True
 deaths=0
 element="normal"
+lorr="right"
 
 #function setup
 def setmask(): #this sets which mask to use
@@ -274,7 +275,7 @@ while True: #level loop
       else: #if touching water
         ypos+=gravity #go down
     else: #if touching ground
-      ypos+=yvel #go up
+      ypos+=yvel-gravity #go up
       yvel=0 #and don't go down
 
     keys=pygame.key.get_pressed() #the keys that are pressed
@@ -287,16 +288,10 @@ while True: #level loop
       ypos-=3*gravity #swim
     if keys[pygame.K_LEFT]: #if pressing left
       xvel-=1.5 #accelerate left
-      if big: #if you are big
-        costume=playerleft #then set your costume to the big player left
-      else: #if small
-        costume=playersmallleft #set to small player left
+      lorr="left"
     if keys[pygame.K_RIGHT]: #if pressing right
       xvel+=1.5 #go right
-      if big: #if big
-        costume=playerright #set costume to big player right
-      else: #if small
-        costume=playersmallright #set to small player right
+      lorr="right"
     if keys[pygame.K_z] and level>=11 and ((down_touch and gravity==1) or (up_touch and gravity==-1)): #if switching gravity
       if canswitchg: #and if you can switch
         gravity=-gravity #reverse gravity
@@ -320,21 +315,21 @@ while True: #level loop
       cann=True
     if keys[pygame.K_p]:
       startthing()
-    #set the costume if not pressing left and right
-    if not big and costume==playerleft:
+    #set the costume
+    if not big and lorr=="left":
       costume=playersmallleft
-    if not big and costume==playerright:
+    if not big and lorr=="right":
       costume=playersmallright
-    if big and costume==playersmallleft:
+    if big and lorr=="left":
       costume=playerleft
-    if big and costume==playersmallright:
+    if big and lorr=="right":
       costume=playerright
     for event in pygame.event.get():
       if event.type==pygame.QUIT: #if you press quit
         pygame.quit() #then quit
         sys.exit() #and exit
 
-    if touch_lava: #if touching lava
+    if touch_lava or (ypos<=0 and gravity==-1) or (ypos>=650 and gravity==1): #if touching lava or falling off the screen
       xpos,ypos,xvel,yvel,gravity=0,550,0,0,1 #then restart
       deaths+=1
 
