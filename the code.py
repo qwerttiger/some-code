@@ -89,7 +89,6 @@ def drawtext(text,colour): #draws a single piece of text
   screen.blit(pygame.font.SysFont("arial",30).render(text,True,colour),(350-round(pygame.font.SysFont("arial",30).render(text,True,colour).get_width()/2),100-pygame.font.SysFont("arial",30).render(text,True,colour).get_height()/2))
 
 def drawtexts(lists): #draw multiple texts
-  global displaytime
   for listt in lists: #for every given parameter
     if level==listt[0]: #if it is the given level
       thing=listt[1:] #then the list of things to draw is set to "thing"
@@ -97,15 +96,20 @@ def drawtexts(lists): #draw multiple texts
         drawtext(InsertsRandomCharacter,(0,0,0)) #draw the thing it is supposed to draw
         pygame.display.flip() #update
         time.sleep(1) #waits
-        displaytime+=1
         drawtext(InsertsRandomCharacter,(255,255,255)) #delete the text
         for event in pygame.event.get(): #see if you quit
           if event.type==pygame.QUIT:
             pygame.quit()
             sys.exit()
+def displaytime_():
+  global displaytime
+  displaytime=0
+  for x in listofdisplays:
+    displaytime+=len(x[1:])
 
 def startthing(): #the thing at the start
-  global playerright,playerleft,playersmallleft,playersmallright
+  global playerright,playerleft,playersmallleft,playersmallright,t
+  ctime=time.time()
   screen.fill((255,255,255))
   drawtext("elements | a platformer",(0,0,0))
   #drawing play button
@@ -124,7 +128,8 @@ def startthing(): #the thing at the start
         sys.exit()
       if (event.type==pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pos()[0]>=300 and pygame.mouse.get_pos()[0]<=400 and pygame.mouse.get_pos()[1]>=300 and pygame.mouse.get_pos()[1]<=400) or event.type==pygame.KEYDOWN:
         keep_going=False
-      if (event.type==pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pos()[0]>=100 and pygame.mouse.get_pos()[0]<=300 and pygame.mouse.get_pos()[1]>=300 and pygame.mouse.get_pos()[1]<=400) or event.type==pygame.KEYDOWN:
+        t+=time.time()-ctime
+      if event.type==pygame.MOUSEBUTTONDOWN and pygame.mouse.get_pos()[0]>=100 and pygame.mouse.get_pos()[0]<=300 and pygame.mouse.get_pos()[1]>=300 and pygame.mouse.get_pos()[1]<=400:
         screen.fill((255,255,255))
         pygame.draw.rect(screen,(0,0,0),pygame.Rect((175,325),(50,50)))
         pygame.draw.rect(screen,(255,0,0),pygame.Rect((225,325),(50,50)))
@@ -182,6 +187,8 @@ def startthing(): #the thing at the start
                 playerleft=pygame.transform.flip(playerright,True,False)
                 playersmallleft=pygame.transform.scale(playerleft,(25,25))
                 playersmallright=pygame.transform.scale(playerright,(25,25))
+                for x in [playerright,playerleft,playersmallleft,playersmallright]:
+                  x.set_colorkey((255,255,255))
               screen.fill((255,255,255))
               drawtext("elements | a platformer",(0,0,0))
               pygame.draw.rect(screen,(0,0,0),pygame.Rect((300,300),(100,100)),1)
@@ -195,8 +202,9 @@ def startthing(): #the thing at the start
 
 #main game
 
-startthing()
+displaytime_()
 t=time.time()
+startthing()
 while True: #level loop
   if level==13:
     element="grass"
@@ -266,7 +274,7 @@ while True: #level loop
       else: #if touching water
         ypos+=gravity #go down
     else: #if touching ground
-      ypos+=yvel-0.5*gravity #go up
+      ypos+=yvel #go up
       yvel=0 #and don't go down
 
     keys=pygame.key.get_pressed() #the keys that are pressed
@@ -297,6 +305,11 @@ while True: #level loop
       canswitchg=True #you can switch gravity
     if keys[pygame.K_r]: #if restart
       xvel,yvel,xpos,ypos,gravity,big=0,0,0,550,1,True
+      if keys[pygame.K_e]:
+        level=1
+        element="normal"
+        t=time.time()
+        break
     if keys[pygame.K_n] and cann: #if skip level
       cann=False
       level+=1
