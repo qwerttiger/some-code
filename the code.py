@@ -90,11 +90,11 @@ def drawtexts(lists): #draw multiple texts
   for listt in lists: #for every given parameter
     if level==listt[0]: #if it is the given level
       thing=listt[1:] #then the list of things to draw is set to "thing"
-      for InsertsRandomCharacter in thing: #for something in the list "thing"
-        drawtext(InsertsRandomCharacter,(0,0,0)) #draw the thing it is supposed to draw
+      for x in thing: #for something in the list "thing"
+        drawtext(x,(0,0,0)) #draw the thing it is supposed to draw
         pygame.display.flip() #update
         time.sleep(1) #waits
-        drawtext(InsertsRandomCharacter,(255,255,255)) #delete the text
+        drawtext(x,(255,255,255)) #delete the text
         for event in pygame.event.get(): #see if you quit
           if event.type==pygame.QUIT:
             pygame.quit()
@@ -303,14 +303,14 @@ while True: #level loop
 
     keys=pygame.key.get_pressed() #the keys that are pressed
 
-    if keys[pygame.K_UP] and ((down_touch and gravity==1) or (up_touch and gravity==-1)) and not touch_water: #if you press up while touching the ground and not touching the water
+    if (keys[pygame.K_UP] or keys[pygame.K_w]) and ((down_touch and gravity==1) or (up_touch and gravity==-1)) and not touch_water: #if you press up while touching the ground and not touching the water
       yvel+=20*gravity #jump
-    if keys[pygame.K_UP] and touch_water: #if you press up while touching water
+    if (keys[pygame.K_UP] or keys[pygame.K_w]) and touch_water: #if you press up while touching water
       ypos-=3*gravity #swim
-    if keys[pygame.K_LEFT]: #if pressing left
+    if keys[pygame.K_LEFT] or keys[pygame.K_a]: #if pressing left
       xvel-=1.5 #accelerate left
       lorr="left" #left
-    if keys[pygame.K_RIGHT]: #if pressing right
+    if keys[pygame.K_RIGHT] or keys[pygame.K_d]: #if pressing right
       xvel+=1.5 #go right
       lorr="right" #right
 
@@ -330,8 +330,25 @@ while True: #level loop
         break #and break out of main loop
 
     if keys[pygame.K_n]: #if skip level
+      t_=time.time() #set t_ to current time
       level+=1 #add 1 to levels
       skips+=1 #change skips by 1
+      while pygame.key.get_pressed()[pygame.K_n]: #while you are pressing n
+        for event in pygame.event.get(): #for every event
+          if event.type==pygame.QUIT: #if you quit
+            pygame.quit() #quit
+            sys.exit() #exit
+      t+=time.time()-t_ #add starting time by current elapsed time so real elapsed time goes down
+      break #break out of main loop
+
+    if keys[pygame.K_b] and level!=1: #if skip level
+      level-=1 #subtract 1 from levels
+      while pygame.key.get_pressed()[pygame.K_b]: #while you are pressing b
+        for event in pygame.event.get(): #for every event
+          if event.type==pygame.QUIT: #if you quit
+            pygame.quit() #quit
+            sys.exit() #exit
+      t+=time.time()-t_ #add starting time by current elapsed time so real elapsed time goes down
       break #break out of main loop
 
     if keys[pygame.K_p]: #if pause
