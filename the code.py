@@ -1,7 +1,7 @@
 import os #import os, a tool for not printing pygame support prompt
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT']="hide" #hide support prompt
 
-import pygame,copy,sys,time #import pygame; copy, a tool for copying a file; sys, a tool for exiting without confirmation; and time, a tool for waithing and recording the time
+import pygame,copy,sys,time,random #import pygame; copy, a tool for copying a file; sys, a tool for exiting without confirmation; and time, a tool for waiting and recording the time, and random, a tool for random numbers
 
 pygame.init() #pygame setup
 
@@ -83,18 +83,19 @@ def touchingmask(mask): #mask collide detection
 def touchingmask2(mask,diff): #more advanced mask collide detection
   return bool(mask.overlap(ground,(-round(xpos+diff[0]),-round(ypos+diff[1]))))
 
-def drawtext(text,colour): #draws a single piece of text
-  screen.blit(pygame.font.SysFont("arial",30).render(text,True,colour),(350-round(pygame.font.SysFont("arial",30).render(text,True,colour).get_width()/2),100-pygame.font.SysFont("arial",30).render(text,True,colour).get_height()/2))
+def drawtext(text,colour,size=30,pos=(350,100)): #draws a single piece of text
+  screen.blit(pygame.font.SysFont("arial",size).render(text,True,colour),(pos[0]-round(pygame.font.SysFont("arial",size).render(text,True,colour).get_width()/2),pos[1]-pygame.font.SysFont("arial",size).render(text,True,colour).get_height()/2))
+  return pygame.font.SysFont("arial",size).render(text,True,colour)
 
 def drawtexts(lists): #draw multiple texts
   for listt in lists: #for every given parameter
     if level==listt[0]: #if it is the given level
       thing=listt[1:] #then the list of things to draw is set to "thing"
       for x in thing: #for something in the list "thing"
-        drawtext(x,(0,0,0)) #draw the thing it is supposed to draw
+        y=drawtext(x,(0,0,0)) #draw the thing it is supposed to draw
         pygame.display.flip() #update
         time.sleep(1) #waits
-        drawtext(x,(255,255,255)) #delete the text
+        pygame.draw.rect(screen,(255,255,255),pygame.Rect((350-round(y.get_width()/2),100-round(y.get_height()/2)),(y.get_width(),y.get_height()))) #delete the text
         for event in pygame.event.get(): #see if you quit
           if event.type==pygame.QUIT:
             pygame.quit()
@@ -105,12 +106,20 @@ def displaytime_():
   for x in listofdisplays: #for everything in displays
     displaytime+=len(x[1:]) #change displaytime by the number of things to display
 
+def displaytime__(level):
+  x=0
+  for y in range(len(listofdisplays)):
+    if listofdisplays[y][0]<=level:
+      x+=len(listofdisplays[y][1:])
+  return x
+
+
 def startthing(): #the thing at the start
   global playerright,playerleft,playersmallleft,playersmallright,t #set everything to be global
   ctime=time.time() #current time
 
   screen.fill((255,255,255)) #fill screen
-  drawtext("elements | a platformer",(0,0,0)) #draw text
+  drawtext("elements | a platformer",(0,0,0),50) #draw text
   #drawing play button
   pygame.draw.rect(screen,(0,0,0),pygame.Rect((300,300),(100,100)),1)
   pygame.draw.line(screen,(0,0,0),(336,325),(336,375))
@@ -205,7 +214,7 @@ def startthing(): #the thing at the start
 
               #draw the things
               screen.fill((255,255,255))
-              drawtext("elements | a platformer",(0,0,0))
+              drawtext("elements | a platformer",(0,0,0),50)
               pygame.draw.rect(screen,(0,0,0),pygame.Rect((300,300),(100,100)),1)
               pygame.draw.line(screen,(0,0,0),(336,325),(336,375))
               pygame.draw.line(screen,(0,0,0),(336,325),(379,350))
@@ -308,10 +317,10 @@ while True: #level loop
     if (keys[pygame.K_UP] or keys[pygame.K_w]) and touch_water: #if you press up while touching water
       ypos-=3*gravity #swim
     if keys[pygame.K_LEFT] or keys[pygame.K_a]: #if pressing left
-      xvel-=1.5 #accelerate left
+      xvel-=1.25 #accelerate left
       lorr="left" #left
     if keys[pygame.K_RIGHT] or keys[pygame.K_d]: #if pressing right
-      xvel+=1.5 #go right
+      xvel+=1.25 #go right
       lorr="right" #right
 
     if keys[pygame.K_z] and level>=11 and ((down_touch and gravity==1) or (up_touch and gravity==-1)): #if switching gravity
@@ -398,6 +407,9 @@ while True: #level loop
     #move by the velocity
     xpos+=xvel
     ypos-=yvel
+
+    screen.blit(pygame.font.SysFont("arial",20).render("level: "+str(level)+" time: "+str(round(time.time()-t-displaytime__(level)))+" deaths: "+str(deaths),1,(random.randint(0,255),random.randint(0,255),random.randint(0,255))),(0,0)) #draw usefull stuff like level, deaths, and time
+
     pygame.display.flip() #update
 
     if touch_win: #if you win
