@@ -38,7 +38,7 @@ yvel=0 #set y velocity
 big=True #big or small
 gravity=1 #set gravity to down
 canswitchg=True #set if you can switch gravity
-listofdisplays=[(1,"hi","this is a platformer","left and right keys to move"),(2,"up to jump"),(3,"avoid red"),(4,"green makes you shrink"),(5,"blue makes you back to normal"),(6,"magenta makes you go right"),(8,"water!"),(9,"don't get stuck inside","oh by the way press \"r\" to reset"),(10,"a trampoline!"),(11,"press z to switch gravity"),(12,"if it's too hard, press \"n\"."),(13,"now the element is grass"),(14,"use your power of gravity"),(16,"lolllll")] #list of things to display
+listofdisplays=[(1,"hi","this is a platformer","left and right keys to move"),(2,"up to jump"),(3,"avoid red"),(4,"green makes you shrink"),(5,"blue makes you back to normal"),(6,"magenta makes you go right"),(8,"water!"),(9,"don't get stuck inside","oh by the way press \"r\" to reset"),(10,"a trampoline!"),(11,"press z to switch gravity"),(12,"if it's too hard, press \"n\"."),(13,"now the element is grass"),(14,"use your power of gravity"),(16,"lolllll"),(17,"press x")] #list of things to display
 displaytime=0 #the time it took to display
 skips=0 #number of skips
 deaths=0 #number of deaths
@@ -55,7 +55,7 @@ def setmask(): #this sets which mask to use
     charmask=smallcharmask #set the mask to the small mask
 
 def draw(): #this draws the background
-  screen.blit(pygame.image.load(f"C:/Users/Rainbow/Desktop/python/platformer sprites/level {level}.png"),(0,0))
+  screen.blit(file,(0,0))
 
 def drawchar(): #draws the character
   screen.blit(costume,(round(xpos),round(ypos)))
@@ -66,9 +66,11 @@ def maketomask(*things): #makes a string and colour to a mask
     exec(f"global {name}",globals()) #global name
     exec(f"{name}=pygame.mask.from_threshold({name},{colour},(1,1,1))",globals()) #name=mask
 
+def setuplevel():
+  global file
+  file=pygame.image.load(f"C:/Users/Rainbow/Desktop/python/platformer sprites/level {level}.png") #the level file
 def setuplvl(): #sets up the masks for the level
   global ground,lava,jumpy,fastleft,fastright,water,shrink,normal,win #global variables
-  file=pygame.image.load(f"C:/Users/Rainbow/Desktop/python/platformer sprites/level {level}.png") #the level file
   ground,lava,jumpy,fastleft,fastright,water,shrink,normal,win=copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file) #set everything to copies of the file
   maketomask(["lava",(255,0,0)],["jumpy",(255,255,100)],["fastleft",(0,255,0)],["fastright",(255,0,255)],["water",(0,255,255)],["shrink",(0,100,0)],["normal",(0,0,100)],["win",(255,255,0)]) #make them to masks
 
@@ -112,7 +114,6 @@ def displaytime__(level):
     if listofdisplays[y][0]<=level:
       x+=len(listofdisplays[y][1:])
   return x
-
 
 def startthing(): #the thing at the start
   global playerright,playerleft,playersmallleft,playersmallright,t #set everything to be global
@@ -238,6 +239,7 @@ while True: #level loop
   xvel,yvel=0,0 #set velocity to 0
   screen.fill((255,255,255)) #fill the screen
   if os.path.exists(f"C:/Users/Rainbow/Desktop/python/platformer sprites/level {level}.png"): #if the background picture exists
+    setuplevel() #setup level picture
     setuplvl() #setup the level
     xpos,ypos,gravity=0,599,1 #setup the character position
     big=True #go bigger
@@ -317,10 +319,10 @@ while True: #level loop
     if (keys[pygame.K_UP] or keys[pygame.K_w]) and touch_water: #if you press up while touching water
       ypos-=3*gravity #swim
     if keys[pygame.K_LEFT] or keys[pygame.K_a]: #if pressing left
-      xvel-=1.25 #accelerate left
+      xvel-=1.5 #accelerate left
       lorr="left" #left
     if keys[pygame.K_RIGHT] or keys[pygame.K_d]: #if pressing right
-      xvel+=1.25 #go right
+      xvel+=1.5 #go right
       lorr="right" #right
 
     if keys[pygame.K_z] and level>=11 and ((down_touch and gravity==1) or (up_touch and gravity==-1)): #if switching gravity
@@ -330,8 +332,38 @@ while True: #level loop
     else: #else
       canswitchg=True #you can switch gravity
 
+    if keys[pygame.K_x]:# and level>=17:
+      if big:
+        surface=pygame.Surface((50,50))
+
+        if not element=="grass":
+          surface.fill((0,0,0))
+        if element=="grass":
+          surface.fill((0,200,0))
+
+        if gravity==1:
+          file.blit(surface,(xpos,ypos+50))
+        else:
+          file.blit(surface,(xpos,ypos))
+      else:
+        surface=pygame.Surface((25,25))
+
+        if not element=="grass":
+          surface.fill((0,0,0))
+        if element=="grass":
+          surface.fill((0,200,0))
+
+        if gravity==1:
+          file.blit(surface,(xpos,ypos+25))
+        else:
+          file.blit(surface,(xpos,ypos))
+
+      setuplvl()
+
     if keys[pygame.K_r]: #if restart
       xvel,yvel,xpos,ypos,gravity,big=0,0,0,599,1,True
+      setuplevel()
+      setuplvl()
       if keys[pygame.K_e]: #if hard restart
         level=1 #restart level
         element="normal" #switch element to normal
@@ -340,8 +372,13 @@ while True: #level loop
 
     if keys[pygame.K_n]: #if skip level
       t_=time.time() #set t_ to current time
+
       level+=1 #add 1 to levels
       skips+=1 #change skips by 1
+
+      draw() #draw background
+      xpos,ypos=0,599 #reset position
+
       while pygame.key.get_pressed()[pygame.K_n]: #while you are pressing n
         for event in pygame.event.get(): #for every event
           if event.type==pygame.QUIT: #if you quit
@@ -407,11 +444,11 @@ while True: #level loop
     #move by the velocity
     xpos+=xvel
     ypos-=yvel
-
-    screen.blit(pygame.font.SysFont("arial",20).render("level: "+str(level)+" time: "+str(round(time.time()-t-displaytime__(level)))+" deaths: "+str(deaths),1,(random.randint(0,255),random.randint(0,255),random.randint(0,255))),(0,0)) #draw usefull stuff like level, deaths, and time
+    screen.blit(pygame.font.SysFont("arial",20).render("level: "+str(level)+" time: "+str(round(time.time()-t-displaytime__(level)))+" deaths: "+str(deaths),1,(random.randint(0,255),random.randint(0,255),random.randint(0,255))),(0,0))
 
     pygame.display.flip() #update
 
+    time.sleep(0.01) #sleep for a small amout of ime so the game is not as fast
     if touch_win: #if you win
       level+=1 #go to next level
       break #break out of loop
