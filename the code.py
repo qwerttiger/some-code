@@ -5,21 +5,25 @@ import pygame,copy,sys,time,random #import pygame; copy, a tool for copying a fi
 
 pygame.init() #pygame setup
 
-playerright=pygame.image.load("C:/Users/Rainbow/Desktop/python/platformer sprites/player.png") #image loading
+playerright=pygame.image.load("C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/player.png") #image loading
 playerleft=pygame.transform.flip(playerright,True,False) #flip the original picture to make the left-facing picture
 playersmallleft=pygame.transform.scale(playerleft,(25,25)) #small left
 playersmallright=pygame.transform.scale(playerright,(25,25)) #small right
+playerleftg=pygame.transform.flip(playerleft,False,True) #upside down left
+playerrightg=pygame.transform.flip(playerright,False,True) #upside down right
+playersmallleftg=pygame.transform.flip(playersmallleft,False,True) #upside down small left
+playersmallrightg=pygame.transform.flip(playersmallright,False,True) #upside down small right
 
-for x in [playerright,playerleft,playersmallleft,playersmallright]: #for loop
+for x in [playerright,playerleft,playersmallleft,playersmallright,playerrightg,playerleftg,playersmallleftg,playersmallrightg]: #for loop
   x.set_colorkey((255,255,255)) #set the transparent colourkey
 
 #mask making (masks can tell you which things collide)
-top=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Desktop/python/platformer sprites/top.png"),(0,0,0),(1,1,1))
-bottom=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Desktop/python/platformer sprites/bottom.png"),(0,0,0),(1,1,1))
-side=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Desktop/python/platformer sprites/side.png"),(0,0,0),(1,1,1))
-topsmall=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Desktop/python/platformer sprites/topsmall.png"),(0,0,0),(1,1,1))
-bottomsmall=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Desktop/python/platformer sprites/bottomsmall.png"),(0,0,0),(1,1,1))
-sidesmall=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Desktop/python/platformer sprites/sidesmall.png"),(0,0,0),(1,1,1))
+top=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/top.png"),(0,0,0),(1,1,1))
+bottom=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/bottom.png"),(0,0,0),(1,1,1))
+side=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/side.png"),(0,0,0),(1,1,1))
+topsmall=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/topsmall.png"),(0,0,0),(1,1,1))
+bottomsmall=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/bottomsmall.png"),(0,0,0),(1,1,1))
+sidesmall=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/sidesmall.png"),(0,0,0),(1,1,1))
 
 bigcharmask=pygame.mask.Mask((50,50),True)
 smallcharmask=pygame.mask.Mask((25,25),True)
@@ -68,7 +72,7 @@ def maketomask(*things): #makes a string and colour to a mask
 
 def setuplevel():
   global file
-  file=pygame.image.load(f"C:/Users/Rainbow/Desktop/python/platformer sprites/level {level}.png") #the level file
+  file=pygame.image.load(f"C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/level {level}.png") #the level file
 def setuplvl(): #sets up the masks for the level
   global ground,lava,jumpy,fastleft,fastright,water,shrink,normal,win #global variables
   ground,lava,jumpy,fastleft,fastright,water,shrink,normal,win=copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file) #set everything to copies of the file
@@ -209,8 +213,11 @@ def startthing(): #the thing at the start
                 playerleft=pygame.transform.flip(playerright,True,False) #set the new playerleft
                 playersmallleft=pygame.transform.scale(playerleft,(25,25)) #and the new playersmallleft
                 playersmallright=pygame.transform.scale(playerright,(25,25)) #and playersmallright
-
-                for x in [playerright,playerleft,playersmallleft,playersmallright]: #for everything in this list
+                playerleftg=pygame.transform.flip(playerleft,False,True) #upside down left
+                playerrightg=pygame.transform.flip(playerright,False,True) #upside down right
+                playersmallleftg=pygame.transform.flip(playersmallleft,False,True) #upside down small left
+                playersmallrightg=pygame.transform.flip(playersmallright,False,True) #upside down small right
+                for x in [playerright,playerleft,playersmallleft,playersmallright,playerrightg,playerleftg,playersmallleftg,playersmallrightg]: #for everything in this list
                   x.set_colorkey((255,255,255)) #set the colourkey
 
               #draw the things
@@ -238,7 +245,7 @@ while True: #level loop
 
   xvel,yvel=0,0 #set velocity to 0
   screen.fill((255,255,255)) #fill the screen
-  if os.path.exists(f"C:/Users/Rainbow/Desktop/python/platformer sprites/level {level}.png"): #if the background picture exists
+  if os.path.exists(f"C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/level {level}.png"): #if the background picture exists
     setuplevel() #setup level picture
     setuplvl() #setup the level
     xpos,ypos,gravity=0,599,1 #setup the character position
@@ -332,34 +339,6 @@ while True: #level loop
     else: #else
       canswitchg=True #you can switch gravity
 
-    if keys[pygame.K_x]:# and level>=17:
-      if big:
-        surface=pygame.Surface((50,50))
-
-        if not element=="grass":
-          surface.fill((0,0,0))
-        if element=="grass":
-          surface.fill((0,200,0))
-
-        if gravity==1:
-          file.blit(surface,(xpos,ypos+50))
-        else:
-          file.blit(surface,(xpos,ypos))
-      else:
-        surface=pygame.Surface((25,25))
-
-        if not element=="grass":
-          surface.fill((0,0,0))
-        if element=="grass":
-          surface.fill((0,200,0))
-
-        if gravity==1:
-          file.blit(surface,(xpos,ypos+25))
-        else:
-          file.blit(surface,(xpos,ypos))
-
-      setuplvl()
-
     if keys[pygame.K_r]: #if restart
       xvel,yvel,xpos,ypos,gravity,big=0,0,0,599,1,True
       setuplevel()
@@ -401,14 +380,24 @@ while True: #level loop
       startthing() #do the start thing
 
     #set the costume
-    if not big and lorr=="left":
-      costume=playersmallleft
-    if not big and lorr=="right":
-      costume=playersmallright
-    if big and lorr=="left":
-      costume=playerleft
-    if big and lorr=="right":
-      costume=playerright
+    if gravity==1:
+      if not big and lorr=="left":
+        costume=playersmallleft
+      if not big and lorr=="right":
+        costume=playersmallright
+      if big and lorr=="left":
+        costume=playerleft
+      if big and lorr=="right":
+        costume=playerright
+    if gravity==-1:
+      if not big and lorr=="left":
+        costume=playersmallleftg
+      if not big and lorr=="right":
+        costume=playersmallrightg
+      if big and lorr=="left":
+        costume=playerleftg
+      if big and lorr=="right":
+        costume=playerrightg
 
     for event in pygame.event.get():
       if event.type==pygame.QUIT: #if you press quit
@@ -445,6 +434,34 @@ while True: #level loop
     xpos+=xvel
     ypos-=yvel
     screen.blit(pygame.font.SysFont("arial",20).render("level: "+str(level)+" time: "+str(round(time.time()-t-displaytime__(level)))+" deaths: "+str(deaths),1,(random.randint(0,255),random.randint(0,255),random.randint(0,255))),(0,0))
+
+    if keys[pygame.K_x] and level>=17:
+      if big:
+        surface=pygame.Surface((50,50))
+
+        if not element=="grass":
+          surface.fill((0,0,0))
+        if element=="grass":
+          surface.fill((0,200,0))
+
+        if gravity==1:
+          file.blit(surface,(xpos,ypos+53*gravity))
+        else:
+          file.blit(surface,(xpos,ypos))
+      else:
+        surface=pygame.Surface((25,25))
+
+        if not element=="grass":
+          surface.fill((0,0,0))
+        if element=="grass":
+          surface.fill((0,200,0))
+
+        if gravity==1:
+          file.blit(surface,(xpos,ypos+28*gravity))
+        else:
+          file.blit(surface,(xpos,ypos))
+
+      setuplvl()
 
     pygame.display.flip() #update
 
