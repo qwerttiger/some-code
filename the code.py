@@ -5,7 +5,7 @@ import pygame,copy,sys,time,random #import pygame; copy, a tool for copying a fi
 
 pygame.init() #pygame setup
 
-playerright=pygame.image.load("C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/player.png") #image loading
+playerright=pygame.image.load("platformer sprites/player.png") #image loading
 playerleft=pygame.transform.flip(playerright,True,False) #flip the original picture to make the left-facing picture
 playersmallleft=pygame.transform.scale(playerleft,(25,25)) #small left
 playersmallright=pygame.transform.scale(playerright,(25,25)) #small right
@@ -18,12 +18,12 @@ for x in [playerright,playerleft,playersmallleft,playersmallright,playerrightg,p
   x.set_colorkey((255,255,255)) #set the transparent colourkey
 
 #mask making (masks can tell you which things collide)
-top=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/top.png"),(0,0,0),(1,1,1))
-bottom=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/bottom.png"),(0,0,0),(1,1,1))
-side=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/side.png"),(0,0,0),(1,1,1))
-topsmall=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/topsmall.png"),(0,0,0),(1,1,1))
-bottomsmall=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/bottomsmall.png"),(0,0,0),(1,1,1))
-sidesmall=pygame.mask.from_threshold(pygame.image.load("C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/sidesmall.png"),(0,0,0),(1,1,1))
+top=pygame.mask.from_threshold(pygame.image.load("platformer sprites/top.png"),(0,0,0),(1,1,1))
+bottom=pygame.mask.from_threshold(pygame.image.load("platformer sprites/bottom.png"),(0,0,0),(1,1,1))
+side=pygame.mask.from_threshold(pygame.image.load("platformer sprites/side.png"),(0,0,0),(1,1,1))
+topsmall=pygame.mask.from_threshold(pygame.image.load("platformer sprites/topsmall.png"),(0,0,0),(1,1,1))
+bottomsmall=pygame.mask.from_threshold(pygame.image.load("platformer sprites/bottomsmall.png"),(0,0,0),(1,1,1))
+sidesmall=pygame.mask.from_threshold(pygame.image.load("platformer sprites/sidesmall.png"),(0,0,0),(1,1,1))
 
 bigcharmask=pygame.mask.Mask((50,50),True)
 smallcharmask=pygame.mask.Mask((25,25),True)
@@ -72,7 +72,7 @@ def maketomask(*things): #makes a string and colour to a mask
 
 def setuplevel():
   global file
-  file=pygame.image.load(f"C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/level {level}.png") #the level file
+  file=pygame.image.load(f"platformer sprites/level {level}.png") #the level file
 def setuplvl(): #sets up the masks for the level
   global ground,lava,jumpy,fastleft,fastright,water,shrink,normal,win #global variables
   ground,lava,jumpy,fastleft,fastright,water,shrink,normal,win=copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file),copy.copy(file) #set everything to copies of the file
@@ -245,7 +245,7 @@ while True: #level loop
 
   xvel,yvel=0,0 #set velocity to 0
   screen.fill((255,255,255)) #fill the screen
-  if os.path.exists(f"C:/Users/Rainbow/Documents/GitHub/some-code/platformer sprites/level {level}.png"): #if the background picture exists
+  if os.path.exists(f"platformer sprites/level {level}.png"): #if the background picture exists
     setuplevel() #setup level picture
     setuplvl() #setup the level
     xpos,ypos,gravity=0,599,1 #setup the character position
